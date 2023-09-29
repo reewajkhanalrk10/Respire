@@ -4,7 +4,7 @@ const cors=require("cors")
 const bodypaser=require("body-parser")
 const app=express()
 dbconnect();
-const PORT =9999;
+const PORT =8008;
 const middleware=()=>{
     app.use(express.json())
     app.use((req, res,next)=>{

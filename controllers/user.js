@@ -11,9 +11,9 @@ const client = Client.forTestnet();
 //Set your account as the client's operator
 client.setOperator(myAccountId, myPrivateKey);
 //Set the default maximum transaction fee (in Hbar)
-client.setDefaultMaxTransactionFee(new Hbar(20));
+client.setDefaultMaxTransactionFee(new Hbar(100));
 //Set the maximum payment for queries (in Hbar)
-client.setMaxQueryPayment(new Hbar(10));
+client.setMaxQueryPayment(new Hbar(50));
 
 const SignUp= async(req,res)=>{
     console.log(req.body);
@@ -52,7 +52,7 @@ const SignUp= async(req,res)=>{
         const hash= await bcrypt.hash(password,salt);//genreating hash
         const token= jwt.sign({username},process.env.SECRET,{expiresIn:'10d'});
         
-        
+        console.log(5.5)
         //Create new keys
         const newAccountPrivateKey = PrivateKey.generateED25519(); 
         const newAccountPublicKey = newAccountPrivateKey.publicKey;
@@ -64,6 +64,7 @@ const SignUp= async(req,res)=>{
         // Get the new account ID
         const getReceipt = await newAccount.getReceipt(client);
         const newAccountId = getReceipt.accountId;
+        console.log(5.6)
         const createuser= await User.create({username,password:hash,fullname,gender,phonenumber,age,medicalconditions,rewards:0,accountid:newAccountId})//creating new user
         console.log(6)
         res.status(200).json({createuser,token});
