@@ -3,11 +3,21 @@ const bcrypt= require("bcrypt")
 const validator=require("validator")
 const jwt =require("jsonwebtoken")
 const { Client, PrivateKey, AccountCreateTransaction, AccountBalanceQuery, Hbar, TransferTransaction } = require("@hashgraph/sdk");
-const client=Client.forTestnet()
+require('dotenv').config()
+const myAccountId = process.env.MY_ACCOUNT_ID;
+const myPrivateKey = process.env.MY_PRIVATE_KEY;
+//Create your Hedera Testnet client
+const client = Client.forTestnet();
+//Set your account as the client's operator
+client.setOperator(myAccountId, myPrivateKey);
+//Set the default maximum transaction fee (in Hbar)
+client.setDefaultMaxTransactionFee(new Hbar(20));
+//Set the maximum payment for queries (in Hbar)
+client.setMaxQueryPayment(new Hbar(10));
+
 const SignUp= async(req,res)=>{
     console.log(req.body);
-    const{username,password,fullname,gender,phonenumber,age,medicalconditions}=req.body;
-    console.log(username,password,fullname,gender,phonenumber,age,medicalconditions)
+    const{username,password,fullname,gender,phonenumber,age,medicalconditions}=req.body
     try{
         //Checking if fields are empty
         if(!username || !password || !fullname  || !phonenumber || !age || !medicalconditions){

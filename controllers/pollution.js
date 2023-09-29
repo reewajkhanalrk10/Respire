@@ -1,4 +1,5 @@
 const {User}=require("../models/user.js");
+const{Device}=require("../models/device.js");
 const axios = require("axios");
 const {getusername} = require("../middleware/auth.js")
 
@@ -116,9 +117,11 @@ const getmessage=async(aqi,username)=>{
     return results
   }
 const opendata=async(lat, lon)=>{
+    const SerialNumber=adsfna
     const apikey = "22e6cb0904c2e25b94524030ed81bf81"
     url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apikey}`
     const response = await fetch(url)
+    const updatecount=await Device.findOneAndUpdate({SerialNumber: SerialNumber},{$inc:{points:1}})
     // response.json reuturns a promise so consol.log(response.json) results pending promise
     const data = await response.json()
     return data 
