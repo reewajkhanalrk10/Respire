@@ -7,12 +7,21 @@ const DeviceSchema=new Schema({
         type:Number,
         required:true
     },
-    username:{
+    ownername:{
         type:String,
-        reference:User
+        reference:User,
+        required:true
     },
     location:{
         type:String,
         required:true
+    },
+    points:{
+        type:Number,
+        default:0,
+        required:true
     }
+
 })
+const Device=mongoose.model("Device",DeviceSchema);
+module.exports={Device}

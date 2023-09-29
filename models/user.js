@@ -19,7 +19,8 @@ const UserSchema =new Schema({
     },
     gender:{
         type:"String",
-        enum: ["Male", "Female","Non-Binary"]
+        enum: ["Male", "Female","Non-Binary"],
+        required:true
     },
     phonenumber: {
         type:String,
@@ -33,6 +34,10 @@ const UserSchema =new Schema({
     
     rewards:{
         type:Number,
+    },
+    accountid:{
+        type:String,
+        required:true
     }
 })
 
