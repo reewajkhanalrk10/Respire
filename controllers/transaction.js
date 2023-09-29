@@ -51,3 +51,19 @@ const getpayment=async(req,res)=>{
     }
     catch(error){console.log(error)}
 }
+
+const seebalance=async (req,res)=>{
+    const receiver=getusername(req,res)
+    try{
+        const receivercheck= await User.findOne({username:receiver})
+        if(!receivercheck){throw new Error("Don't have account for transaction")}
+        const receiveraccountid=receivercheck.accountid;
+        // Verify the account balance
+        const accountBalance = await new AccountBalanceQuery()
+        .setAccountId(receiveraccountid)
+        .execute(client);
+        const output=`User ${receiver} has balance ${accountBalance.hbars.toTinybars()} tinybars`
+        return res.status(200).json(output)
+    }
+    catch(error){console.log(error)}
+}
