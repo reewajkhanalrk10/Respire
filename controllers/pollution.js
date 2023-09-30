@@ -23,7 +23,7 @@ const pollutiondata=async(req,res)=>{
   console.log(aqi)
   index=await scale(aqi)
   let output={
-    coord,components,index,dt
+    coord,components,aqi,dt
   }
   return res.status(200).json(output)
   }
