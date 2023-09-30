@@ -95,7 +95,7 @@ const Login = async (req, res) =>{
         if(!loginuser || !check){
             throw Error("Invalid Login credentials");
         }
-        const token= createToken(loginuser.username);
+        const token= jwt.sign({username},process.env.SECRET,{expiresIn:'10d'});
         const output={username,token}
         console.log({output})
         res.status(200).json(output);
