@@ -2,10 +2,115 @@ const {User}=require("../models/user.js");
 const{Device}=require("../models/device.js");
 const axios = require("axios");
 const {getusername} = require("../middleware/auth.js")
+const { Client, PrivateKey, AccountCreateTransaction, AccountBalanceQuery, Hbar, TransferTransaction,ContractCreateTransaction,ContractId,FileCreateTransaction,ContractFunctionParameters } = require("@hashgraph/sdk");
+require('dotenv').config()
+const fs = require('fs');
+
+var bytecodeFileId
+let newContractId
+    
+    
+const myAccountId = process.env.MY_ACCOUNT_ID;
+const myPrivateKey = process.env.MY_PRIVATE_KEY;
+//Create your Hedera Testnet client
+const client = Client.forTestnet();
+//Set your account as the client's operator
+client.setOperator(myAccountId, myPrivateKey);
+//Set the default maximum transaction fee (in Hbar)
+client.setDefaultMaxTransactionFee(new Hbar(100));
+//Set the maximum payment for queries (in Hbar)
+client.setMaxQueryPayment(new Hbar(50));
+    
+    
+// Define the path to your .bin file
+const createfile=async()=>{
+try{
+    const contractBytecode = fs.readFileSync("./contractbyte.bin");
+    // console.log(fs.readFileSync("./contractbyte.bin").byteLength);
+    //Create a file on Hedera and store the hex-encoded bytecode
+    const fileCreateTx = new FileCreateTransaction()
+    // console.log(1.1)
+    // Create a FileCreateTransaction and set its contents
+    fileCreateTx.setContents(contractBytecode);
+    // console.log(2.2)
+    // Freeze the transaction and execute it as needed
+    fileCreateTx.freezeWith(client)
+    // console.log(3.3)
+    const transactionReceipt = await fileCreateTx.execute(client);
+    // console.log(transactionReceipt)
+    // console.log(1);
+    // Get the receipt of the file create transaction
+    const fileReceipt = await transactionReceipt.getReceipt(client);
+    // console.log(2);
+    // Get the file ID from the receipt
+    const bytecodeFileId = fileReceipt.fileId;
+    // console.log(3);
+    // Return bytecodeFileId or perform additional actions
+    return bytecodeFileId
+  
+}
+catch (Error){console.log(1,Error)}
+}
+
+
+
+
+const gas=100000 
+const contractinstance=async (bytecodeFileId) =>{
+    // console.log(bytecodeFileId);
+    // Instantiate the contract instance
+    const contractTx = new ContractCreateTransaction()
+    //Set the file ID of the Hedera file storing the bytecode
+    .setBytecodeFileId(bytecodeFileId)
+    //Set the gas to instantiate the contract
+    .setGas(gas)
+    //Provide the constructor parameters for the contract
+    .setConstructorParameters(new ContractFunctionParameters().addString("Hello from Hedera!"));
+    
+    console.log(2)
+    //Submit the transaction to the Hedera test network
+    const contractResponse = await contractTx.execute(client);
+    
+    //Get the receipt of the file create transaction
+    const contractReceipt = await contractResponse.getReceipt(client);
+    
+    //Get the smart contract ID
+    const newContractId = contractReceipt.contractId;
+    const ContractAdress=newContractId.toSolidityAddress();
+    return newContractId
+    }
+(async function (){
+    bytecodeFileId=await createfile()
+    console.log("The smart contract byte code file ID is " + bytecodeFileId+typeof(bytecodeFileId));
+    newContractId = await contractinstance(bytecodeFileId);
+    console.log("The newContractId " + newContractId)
+    console.log(0,newContractId,myAccountId)
+})()
+
+
+const increasePoints=async(accountId, contractId, amount)=>{
+ try {
+      const contract = ContractId.fromString(contractId);
+    
+         // Call the contract function to increase points
+         const txResponse = await new ContractCallQuery()
+                 .setContractId(contract)
+                .setGas(100000) // Adjust the gas as needed
+                .setFunction("increasePoints") // Replace with the actual function name
+                .addString(accountId) // Pass the user's account ID as an argument
+                .execute(client);
+    
+            // Wait for the transaction to complete
+          await txResponse.getReceipt(client);
+          console.log(`Points increased for account ${accountId} by ${amount}.`);
+        } catch (error) {
+            console.error("Error increasing points:", error);
+        } 
+}
 
 const pollutiondata=async(req,res)=>{
     const{lat,lon}=req.body
-    const username=getusername(req,res)
+    // const username=getusername(req,res)
     try{
     const response=await opendata(lat,lon)
     const{coord,list}=response
@@ -14,9 +119,11 @@ const pollutiondata=async(req,res)=>{
     const{aqi}=main
     const{co,no,no2,o3,pm2_5,pm10,nh3}=components
     const{time}=dt
-    const message=await getmessage(aqi,username)
+    // const message=await getmessage(aqi,username)
+    console.log(aqi)
+    index=await scale(aqi)
     let output={
-      coord,components,aqi,message,dt
+      coord,components,index,dt
     }
     return res.status(200).json(output)
     }
@@ -122,9 +229,31 @@ const opendata=async(lat, lon)=>{
     url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apikey}`
     const response = await fetch(url)
     const updatecount=await Device.findOneAndUpdate({SerialNumber: SerialNumber},{$inc:{points:1}})
+    const usercheck=await Device.findOne({SerialNumber: SerialNumber})
+    const accountid=await usercheck.accountid
     // response.json reuturns a promise so consol.log(response.json) results pending promise
     const data = await response.json()
     return data 
+}
+
+const hederadata=async(lat, lon)=>{
+  console.log(0,newContractId,myAccountId)
+    const SerialNumber="123456"
+    const apikey = "22e6cb0904c2e25b94524030ed81bf81"
+    url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apikey}`
+    const response = await fetch(url)
+    const updatecount=await Device.findOneAndUpdate({SerialNumber: SerialNumber},{$inc:{points:1}})
+    const usercheck=await Device.findOne({SerialNumber: SerialNumber})
+    const accountid=await usercheck.accountid
+    await increasePoints(accountid,10)
+    // response.json reuturns a promise so consol.log(response.json) results pending promise
+    const data = await response.json()
+    return data 
+}
+const scale=(aqi)=>{
+    // Scale the ratio to the output range with the specified gap
+    const scaledValue = 10 + (aqi - 1) * 20;
+    return scaledValue
 }
 module.exports={
     pollutiondata

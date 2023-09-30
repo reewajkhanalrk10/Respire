@@ -2,6 +2,7 @@ require('dotenv').config()
 const mongoose=require("mongoose");
 const {MongoClient,ServerApiVersion} = require('mongodb');
 
+
 const url="mongodb+srv://abiral:abiral@cluster0.infj9ve.mongodb.net/?retryWrites=true&w=majority";
 // const client = new MongoClient(url, {
 //     serverApi: {

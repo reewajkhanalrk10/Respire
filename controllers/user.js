@@ -2,18 +2,15 @@ const {User}=require("../models/user.js");
 const bcrypt= require("bcrypt")
 const validator=require("validator")
 const jwt =require("jsonwebtoken")
-const { Client, PrivateKey, AccountCreateTransaction, AccountBalanceQuery, Hbar, TransferTransaction } = require("@hashgraph/sdk");
+const { Client, PrivateKey, AccountCreateTransaction, AccountBalanceQuery, Hbar, TransferTransaction,ContractCreateTransaction,ContractId } = require("@hashgraph/sdk");
+const{newContractId,myAccountIdincreasePoints}=require("../index.js");
 require('dotenv').config()
-const myAccountId = process.env.MY_ACCOUNT_ID;
-const myPrivateKey = process.env.MY_PRIVATE_KEY;
-//Create your Hedera Testnet client
-const client = Client.forTestnet();
-//Set your account as the client's operator
-client.setOperator(myAccountId, myPrivateKey);
-//Set the default maximum transaction fee (in Hbar)
-client.setDefaultMaxTransactionFee(new Hbar(100));
-//Set the maximum payment for queries (in Hbar)
-client.setMaxQueryPayment(new Hbar(50));
+const fs = require('fs');
+
+// Usage: Call the function to increase points
+const userAccountId = "USER_ACCOUNT_ID"; // Replace with the user's account ID
+const contractId = "DEPLOYED_CONTRACT_ID"; // Replace with the deployed contract's ID
+const increaseAmount = 10; // Adjust the amount to increase by as needed
 
 const SignUp= async(req,res)=>{
     console.log(req.body);
@@ -48,6 +45,7 @@ const SignUp= async(req,res)=>{
           console.log(5)
           throw Error('Error!! Username already exists')
         }
+
         const salt = await bcrypt.genSalt(10);//generating salt
         const hash= await bcrypt.hash(password,salt);//genreating hash
         const token= jwt.sign({username},process.env.SECRET,{expiresIn:'10d'});

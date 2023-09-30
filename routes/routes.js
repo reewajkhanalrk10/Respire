@@ -9,9 +9,8 @@ const router=express.Router();
 
 router.post('/signup',SignUp);
 router.post('/login',Login);
-
-router.use(ReqAuth)
 router.post('/pollution',pollutiondata)
+router.use(ReqAuth)
 router.post('/predict',getpredictions)
 router.post('/adddevice',adddevice)
 router.post('/getpayment',getpayment)
