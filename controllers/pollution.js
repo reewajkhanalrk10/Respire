@@ -84,7 +84,7 @@ const contractinstance=async (bytecodeFileId) =>{
     console.log("The smart contract byte code file ID is " + bytecodeFileId+typeof(bytecodeFileId));
     newContractId = await contractinstance(bytecodeFileId);
     console.log("The newContractId " + newContractId)
-    console.log(0,newContractId,myAccountId)
+    // console.log(0,newContractId,myAccountId)
 })()
 
 
@@ -94,7 +94,7 @@ const increasePoints=async(accountId, contractId, amount)=>{
     
          // Call the contract function to increase points
          const txResponse = await new ContractCallQuery()
-                 .setContractId(contract)
+                .setContractId(contract)
                 .setGas(100000) // Adjust the gas as needed
                 .setFunction("increasePoints") // Replace with the actual function name
                 .addString(accountId) // Pass the user's account ID as an argument
@@ -237,7 +237,7 @@ const opendata=async(lat, lon)=>{
 }
 
 const hederadata=async(lat, lon)=>{
-  console.log(0,newContractId,myAccountId)
+  console.log(0,myAccountId)
     const SerialNumber="123456"
     const apikey = "22e6cb0904c2e25b94524030ed81bf81"
     url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apikey}`

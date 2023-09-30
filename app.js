@@ -17,6 +17,11 @@ const middleware=()=>{
 app.use(bodypaser.urlencoded({extended:true}))
 
 
-app.listen(PORT,()=>{console.log(`Listening on port ${PORT}`)})
+// app.use(cors(corsOptions));
+//port listening to info
+const listen=() => {
+    app.listen(PORT,'0.0.0.0',()=>{
+    console.log(`Listening on Port ${PORT}`);
+})}
 middleware()
 module.exports=app;
