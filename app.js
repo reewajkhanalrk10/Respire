@@ -16,8 +16,12 @@ const middleware=()=>{
 
 app.use(bodypaser.urlencoded({extended:true}))
 
-
-// app.use(cors(corsOptions));
+const corsOptions = {
+    origin: 'com.example.respire',
+    methods: ['GET', 'POST','PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  };
+app.use(cors(corsOptions));
 //port listening to info
 const listen=() => {
     app.listen(80,'0.0.0.0',()=>{
