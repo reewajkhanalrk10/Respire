@@ -27,5 +27,6 @@ const listen=() => {
     app.listen(80,'0.0.0.0',()=>{
     console.log(`Listening on Port ${PORT}`);
 })}
+listen();
 middleware()
 module.exports=app;
