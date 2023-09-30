@@ -16,6 +16,7 @@ client.setOperator(myAccountId, myPrivateKey);
 client.setDefaultMaxTransactionFee(new Hbar(100));
 //Set the maximum payment for queries (in Hbar)
 client.setMaxQueryPayment(new Hbar(50));
+
 const SignUp= async(req,res)=>{
     console.log(req.body);
     const{username,password,fullname,gender,phonenumber,age,medicalconditions}=req.body
