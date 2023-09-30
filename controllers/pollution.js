@@ -137,7 +137,7 @@ const opendata=async(lat, lon)=>{
 }
 
 const hederadata=async(lat, lon)=>{
-console.log(0,myAccountId)
+// console.log(0,myAccountId)
   const SerialNumber="123456"
   const apikey = "22e6cb0904c2e25b94524030ed81bf81"
   url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apikey}`
