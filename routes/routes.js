@@ -5,11 +5,14 @@ const{pollutiondata}=require("../controllers/pollution.js")
 const{getpredictions}=require("../controllers/predict.js")
 const{adddevice}=require("../controllers/device.js")
 const{getpayment,seebalance}=require("../controllers/transaction.js")
+const{rankdevice}=require("../controllers/redis.js")
 const router=express.Router();
 
 router.post('/signup',SignUp);
 router.post('/login',Login);
 router.post('/pollution',pollutiondata)
+
+router.post('/rankdevice',rankdevice)
 router.use(ReqAuth)
 router.post('/predict',getpredictions)
 router.post('/adddevice',adddevice)
